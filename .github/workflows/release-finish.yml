@@ -2,22 +2,22 @@ name: Release finish
 on:
   workflow_dispatch:
     inputs:
-      version: 
+      version:
         description: "Release version"
         required: true
 jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - name: Event toJSON
-        run: |
-          echo "${{ toJSON(github.event) }}"
-
-      - name: Checkout source code
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v2
         with:
           ref: ${{ github.ref }}
           fetch-depth: 0
+          token: ${{ secrets.SUPER_AUTH_TOKEN }}
+
+      - name: Event toJSON
+        run: |
+          echo "${{ toJSON(github.event) }}"
 
       - name: Install dependencies
         run: |
@@ -27,7 +27,7 @@ jobs:
         run: |
           git flow init -d
 
-      - name: Release start
+      - name: Release finish
         run: |
           git flow release finish ${{ github.event.inputs.version }} -m "chore: version bumped" ${{ github.event.inputs.version }}
 
